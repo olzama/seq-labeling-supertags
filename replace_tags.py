@@ -12,10 +12,13 @@ def replace_ud_tags(conllu_path, tags_path, output_path):
         conllu_lines = conllu_file.readlines()
     with open(tags_path, 'r', encoding='utf-8') as tags_file:
         tags_lines = tags_file.readlines()
+        print("Supertags for {} sentences".format(len(tags_lines)))
     output_lines = []
     tag_index = 0
     tags_for_sentence = tags_lines[tag_index].strip().split(', ')
     for line in conllu_lines:
+        if 'passable' in line:
+            print(5)
         line = line.strip()
         if line.startswith('#') or not line:
             # Copy comments and blank lines as they are
@@ -25,7 +28,7 @@ def replace_ud_tags(conllu_path, tags_path, output_path):
             parts = line.split('\t')
             if len(parts) == 10:
                 alternative_tag = tags_for_sentence.pop(0)
-                parts[4] = alternative_tag
+                parts[3] = alternative_tag
                 output_lines.append('\t'.join(parts))
                 # Move to the next sentence if all tags are used
                 if not tags_for_sentence:
