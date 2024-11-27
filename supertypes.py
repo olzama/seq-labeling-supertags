@@ -4,8 +4,49 @@ import os
 from delphin import tdl
 from copy import copy, deepcopy
 
+import copy
+
+import copy
+
+import copy
+
+import copy
+
 
 def get_n_supertypes(lex, type_name, n):
+    # Helper function to recursively retrieve supertypes
+    def get_supertypes_recursive(type_name, remaining_depth):
+        if remaining_depth == 0 or type_name not in lex:
+            return [], []  # Return empty lists if no supertypes or no more depth
+
+        # Retrieve the supertypes for the current type and convert them to strings
+        supertypes = [str(supertype) for supertype in lex[type_name].supertypes]
+        all_supertypes = copy.deepcopy(supertypes)
+
+        # Group the supertypes at the current level
+        combined_same_level_supertypes = [str(supertype) for supertype in lex[type_name].supertypes]
+
+        # If there's more depth, recurse for each supertype
+        combined_depth_supertypes = []
+        if remaining_depth > 1:
+            for supertype in supertypes:
+                deeper_supertypes, deeper_combined = get_supertypes_recursive(str(supertype), remaining_depth - 1)
+                all_supertypes.extend(deeper_supertypes)
+                combined_depth_supertypes.extend(deeper_combined)
+
+        # Combine supertypes at the same level by joining them with "+"
+        combined_same_level_supertypes_str = '+'.join(sorted(set(combined_same_level_supertypes)))
+
+        # Return all supertypes and combined supertypes for the current depth level
+        return all_supertypes, [combined_same_level_supertypes_str] + combined_depth_supertypes
+
+    # Start the recursive process
+    all_supertypes, combined_supertypes = get_supertypes_recursive(type_name, n)
+
+    # Return the combined supertypes for the given type up to level n
+    return all_supertypes, combined_supertypes
+
+def get_n_supertypes2(lex, type_name, n):
     # Helper function to recursively retrieve supertypes
     def get_supertypes_recursive(type_name, remaining_depth):
         if remaining_depth == 0 or type_name not in lex:
