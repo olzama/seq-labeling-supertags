@@ -17,8 +17,6 @@ def replace_ud_tags(conllu_path, tags_path, output_path):
     tag_index = 0
     tags_for_sentence = tags_lines[tag_index].strip().split(', ')
     for line in conllu_lines:
-        if 'passable' in line:
-            print(5)
         line = line.strip()
         if line.startswith('#') or not line:
             # Copy comments and blank lines as they are
@@ -26,7 +24,7 @@ def replace_ud_tags(conllu_path, tags_path, output_path):
         else:
             # Process token line
             parts = line.split('\t')
-            if len(parts) == 10:
+            if len(parts) == 10 and '-' not in parts[0] and '.' not in parts[0]:
                 alternative_tag = tags_for_sentence.pop(0)
                 parts[3] = alternative_tag
                 output_lines.append('\t'.join(parts))

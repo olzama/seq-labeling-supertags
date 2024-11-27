@@ -34,7 +34,7 @@ def parse_conllu(file_path, output_path):
                 current_sentence = []
         else:
             parts = line.split('\t')
-            if len(parts) < 10 or '-' in parts[0]:
+            if len(parts) < 10 or '-' in parts[0] or '.' in parts[0]:
                 continue
             word_form = parts[1]
             # Find start and end positions for each token in the working sentence text
