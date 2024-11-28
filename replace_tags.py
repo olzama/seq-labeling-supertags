@@ -24,6 +24,7 @@ def replace_ud_tags(conllu_path, tags_path, output_path, grammar, depth=1):
     with open(tags_path, 'r', encoding='utf-8') as tags_file:
         tags_lines = tags_file.readlines()
         print("Supertags for {} sentences".format(len(tags_lines)))
+    dataset_name = conllu_path.split('/')[-1]
     output_lines = []
     tag_index = 0
     tags_for_sentence = tags_lines[tag_index].strip().split(', ')
@@ -65,7 +66,7 @@ def replace_ud_tags(conllu_path, tags_path, output_path, grammar, depth=1):
             else:
                 # Not a valid token line, just append as is
                 output_lines.append(line)
-    with open(output_path, 'w', encoding='utf-8') as output_file:
+    with open(output_path + dataset_name + '-hpsg-' + str(depth) + '.txt', 'w', encoding='utf-8') as output_file:
         output_file.write('\n'.join(output_lines) + '\n')
     print("Original tags: {}".format(len(original_tags)))
     if depth > 0:
@@ -74,13 +75,16 @@ def replace_ud_tags(conllu_path, tags_path, output_path, grammar, depth=1):
         flattened_set = original_tags
     print("Final tags with depth {}: {}".format(depth, len(flattened_set)))
     # Write the summary to the summary file
-    summary_path = conllu_path.split('/')[-1] + '_summary.txt'
+    summary_path = output_path + 'run-summaries/' + dataset_name +'_' + str(depth) + '_summary.txt'
     with open(summary_path, 'w', encoding='utf-8') as summary_file:
         summary_file.write(f"Dataset: {conllu_path.split('/')[-1]}\ndepth: {depth}\n")
         summary_file.write(f"Supertags for {len(tags_lines)} sentences\n")
         summary_file.write(f"No supertypes found for {len(no_supertypes)} tags\n")
         summary_file.write(f"Original tags: {len(original_tags)}\n")
         summary_file.write(f"Final tags with depth {depth}: {len(flattened_set)}\n")
+    with open(output_path + 'tagsets/' + dataset_name + '_final_tags_' + str(depth) + '.txt', 'w', encoding='utf-8') as final_tags_file:
+        for tag in sorted(flattened_set):
+            final_tags_file.write(tag + '\n')
 
 
 #main
