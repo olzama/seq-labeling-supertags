@@ -18,7 +18,7 @@ def get_n_supertypes(lex, type_name, n):
         supertypes = [str(supertype) for supertype in lex[type_name].supertypes]
 
         # Add combined supertypes for the current level (level starts from 0)
-        combined_same_level_supertypes = '+'.join(sorted(set(supertypes)))
+        combined_same_level_supertypes = '+'.join(supertypes)
 
         # If level doesn't exist in the dict, create a new list for this level
         if level not in depth_dict:

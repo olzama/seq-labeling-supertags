@@ -50,6 +50,9 @@ def replace_ud_tags(conllu_path, tags_path, output_path, grammar, depth=1):
                         no_supertypes.add(alternative_tag)
                     if supertypes:
                         supertype = '+'.join(supertypes[depth-1])
+                        # Resplit and rejoin so as to not have duplicate parts:
+                        to_rejoin = supertype.split('+')
+                        supertype = '+'.join(list(set(to_rejoin)))
                         if not alternative_tag in final_tags:
                             final_tags[alternative_tag] = set()
                         final_tags[alternative_tag].add(supertype)
