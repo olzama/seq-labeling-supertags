@@ -3,7 +3,7 @@
 # Define the paths to the input files and the base output directory
 base_conllu_path="/mnt/kesha/seq-labeling-supertags/UD_English-EWT"
 base_predictions_path="/mnt/kesha/neural-supertagging/output/en-ewt"
-base_output_path="en-ewt-ud-no-dupe"  # Root output path
+base_output_path="en-ewt-ud-exceptions"  # Root output path
 depths=(0 1 2 3 4 5)
 
 # Loop over the datasets (train, dev, test) and depths (0 to 5)

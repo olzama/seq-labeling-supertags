@@ -19,6 +19,10 @@ from supertypes import populate_type_defs, get_n_supertypes
 
 
 def replace_ud_tags(conllu_path, tags_path, output_path, grammar, depth=1):
+    exceptions = ["dqleft_pct", "dqright_pct", "n_-_pn-gen_le", "pt_-_comma_le", "av_-_dg-jomv_le", "n_-_m-ssn-spr_le",
+        "n_-_pr-me_le", "n_-_c-dpt_le","d_-_poss-my_le", "n_-_pn-hour_le", "d_-_proxday_le", "pt_-_comma-informal_le",
+        "v_prd_is_le", "pp_-_i-cln_le", "n_-_c-pl-unk_le"]
+
     with open(conllu_path, 'r', encoding='utf-8') as conllu_file:
         conllu_lines = conllu_file.readlines()
     with open(tags_path, 'r', encoding='utf-8') as tags_file:
@@ -43,20 +47,25 @@ def replace_ud_tags(conllu_path, tags_path, output_path, grammar, depth=1):
                 alternative_tag = tags_for_sentence.pop(0)
                 original_tags.add(alternative_tag)
                 supertype = None
-                if depth > 0:
-                    supertypes = get_n_supertypes(grammar, alternative_tag, depth)
-                    if not supertypes:
-                        print("No supertypes found for {}".format(alternative_tag))
-                        no_supertypes.add(alternative_tag)
-                    if supertypes:
-                        supertype = '+'.join(supertypes[depth-1])
-                        # Resplit and rejoin so as to not have duplicate parts:
-                        to_rejoin = supertype.split('+')
-                        supertype = '+'.join(list(set(to_rejoin)))
-                        if not alternative_tag in final_tags:
-                            final_tags[alternative_tag] = set()
-                        final_tags[alternative_tag].add(supertype)
-                parts[3] = supertype if supertype else alternative_tag
+                if not alternative_tag in exceptions:
+                    if depth > 0:
+                        supertypes = get_n_supertypes(grammar, alternative_tag, depth)
+                        if not supertypes:
+                            print("No supertypes found for {}".format(alternative_tag))
+                            no_supertypes.add(alternative_tag)
+                        if supertypes:
+                            supertype = '+'.join(supertypes[depth-1])
+                            # Resplit and rejoin so as to not have duplicate parts:
+                            #to_rejoin = supertype.split('+')
+                            #supertype = '+'.join(list(set(to_rejoin)))
+                            if not alternative_tag in final_tags:
+                                final_tags[alternative_tag] = set()
+                            final_tags[alternative_tag].add(supertype)
+                    parts[3] = supertype if supertype else alternative_tag
+                else:
+                    if not alternative_tag in final_tags:
+                        final_tags[alternative_tag] = set()
+                    final_tags[alternative_tag].add(parts[3])
                 output_lines.append('\t'.join(parts))
                 # Move to the next sentence if all tags are used
                 if not tags_for_sentence:
